@@ -4,8 +4,12 @@ namespace NotasDesktop;
 
 static class Program
 {
-    const string NomeMutex = "NotasDesktop.InstanciaUnica";
-    public const string NomePipe = "NotasDesktop.Pipe";
+    // Com NOTASDESKTOP_DADOS (testes) a instância é separada da instalada, sem disputar o mutex nem o pipe.
+    static readonly string Sufixo = Environment.GetEnvironmentVariable("NOTASDESKTOP_DADOS") is { Length: > 0 } pasta
+        ? "." + (uint)StringComparer.OrdinalIgnoreCase.GetHashCode(pasta)
+        : "";
+    static readonly string NomeMutex = "NotasDesktop.InstanciaUnica" + Sufixo;
+    public static readonly string NomePipe = "NotasDesktop.Pipe" + Sufixo;
 
     // Uso:
     //   NotasDesktop.exe          -> abre as notas salvas (usado na inicialização do Windows)

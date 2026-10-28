@@ -27,19 +27,36 @@ sealed class DesktopLayer : Form
         {
             var cp = base.CreateParams;
             cp.ExStyle |= Native.WS_EX_LAYERED | Native.WS_EX_TOOLWINDOW | Native.WS_EX_NOACTIVATE;
+            // A área de trabalho (Progman) como dona mantém a anotação visível no Win+D / "Mostrar área de trabalho".
+            // Precisa ser já na criação: com ShowInTaskbar = false o WinForms colocaria a janela interna dele como dona.
+            var areaDeTrabalho = Native.FindWindow("Progman", null);
+            if (areaDeTrabalho != IntPtr.Zero) cp.Parent = areaDeTrabalho;
             return cp;
         }
     }
 
+    static readonly int WM_TASKBARCREATED = Native.RegisterWindowMessage("TaskbarCreated");
+
     protected override void OnHandleCreated(EventArgs e)
     {
         base.OnHandleCreated(e);
-        // A área de trabalho (Progman) como dona mantém a anotação visível no Win+D.
-        var areaDeTrabalho = Native.FindWindow("Progman", null);
-        if (areaDeTrabalho != IntPtr.Zero)
-            Native.SetWindowLongPtr(Handle, Native.GWLP_HWNDPARENT, areaDeTrabalho);
+        PrenderNaAreaDeTrabalho();
         AplicarSempreVisivel();
         Redesenhar();
+    }
+
+    protected override void OnShown(EventArgs e)
+    {
+        base.OnShown(e);
+        PrenderNaAreaDeTrabalho();
+    }
+
+    /// <summary>Garante a área de trabalho como dona (também depois que o Explorer reinicia).</summary>
+    void PrenderNaAreaDeTrabalho()
+    {
+        var areaDeTrabalho = Native.FindWindow("Progman", null);
+        if (areaDeTrabalho != IntPtr.Zero && Native.GetWindow(Handle, Native.GW_OWNER) != areaDeTrabalho)
+            Native.SetWindowLongPtr(Handle, Native.GWLP_HWNDPARENT, areaDeTrabalho);
     }
 
     /// <summary>Alfinete ligado: "sempre visível" (por cima até de janelas maximizadas); desligado: nível normal.</summary>
@@ -114,6 +131,12 @@ sealed class DesktopLayer : Form
         {
             m.Result = Native.MA_NOACTIVATE; // clicar aqui não tira o foco do editor
             return;
+        }
+        if (m.Msg == WM_TASKBARCREATED && WM_TASKBARCREATED != 0)
+        {
+            // O Explorer reiniciou (ou terminou de abrir no login): a área de trabalho é uma janela nova.
+            PrenderNaAreaDeTrabalho();
+            AplicarSempreVisivel();
         }
         base.WndProc(ref m);
         if (m.Msg != Native.WM_NCHITTEST || !nota.Editando || nota.Dados.Travada || (int)m.Result != Native.HTCLIENT) return;
