@@ -45,7 +45,8 @@ O instalador:
 
 1. compila o programa e o copia para `%LOCALAPPDATA%\NotasDesktop\app`;
 2. adiciona **"Escrever nota aqui"** no menu do botão direito da área de trabalho;
-3. faz o programa abrir junto com o Windows (para as anotações reaparecerem ao ligar o PC);
+3. faz o programa abrir junto com o Windows, com um atalho na pasta Inicializar (para as anotações
+   reaparecerem ao ligar o PC);
 4. já deixa o programa rodando: aparece um ícone de anotação na bandeja, perto do relógio.
 
 Pronto! Clique com o botão direito na área de trabalho → **Escrever nota aqui**.
@@ -76,6 +77,7 @@ Isso remove o programa, a opção do botão direito e a inicialização com o Wi
 | "Falha na compilação" | Confira com `dotnet --list-sdks` se há um SDK `9.x` (só o *Runtime* não basta). |
 | "a execução de scripts foi desabilitada" | Rode exatamente como no passo 3, com `-ExecutionPolicy Bypass`. |
 | Não aparece "Escrever nota aqui" | No Windows 11, use **Mostrar mais opções** ou **Ctrl+Alt+N**. |
+| As anotações não voltaram depois de reiniciar | Rode o `instalar.ps1` de novo e confira em **Gerenciador de Tarefas → Aplicativos de inicialização** se o **NotasDesktop** está *Habilitado*. Cada abertura fica anotada em `%APPDATA%\NotasDesktop\inicio.log`. |
 | As anotações sumiram atrás das janelas | É o normal: elas ficam no papel de parede. Use **Win+D**, o ícone da bandeja → **Trazer anotações para a frente**, ou o 📌 alfinete. |
 
 Suas anotações ficam guardadas em `%APPDATA%\NotasDesktop\notas.json`.

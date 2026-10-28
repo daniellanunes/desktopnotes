@@ -25,8 +25,23 @@ static class Program
         }
         if (comando == "--sair") return;
 
+        RegistrarInicio(args);
         ApplicationConfiguration.Initialize();
         Application.Run(new NotesApp(novaNota: comando == "--nova"));
+    }
+
+    /// <summary>Anota cada abertura em inicio.log (ajuda a conferir se abriu junto com o Windows).</summary>
+    static void RegistrarInicio(string[] args)
+    {
+        try
+        {
+            Directory.CreateDirectory(Store.Pasta);
+            var log = Path.Combine(Store.Pasta, "inicio.log");
+            if (File.Exists(log) && new FileInfo(log).Length > 64 * 1024) File.Delete(log);
+            var ligadoHa = TimeSpan.FromMilliseconds(Environment.TickCount64);
+            File.AppendAllText(log, $"{DateTime.Now:dd/MM/yyyy HH:mm:ss}  aberto {string.Join(' ', args)}  (PC ligado há {ligadoHa:hh\\:mm\\:ss})\n");
+        }
+        catch { }
     }
 
     static void EnviarParaInstancia(string comando)

@@ -28,7 +28,21 @@ Set-ItemProperty -Path $menu -Name 'Icon' -Value "$exe,0"
 Set-ItemProperty -Path $menu -Name 'Position' -Value 'Top'
 New-Item -Path "$menu\command" -Value "`"$exe`" --nova" -Force | Out-Null
 
-Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'NotasDesktop' -Value "`"$exe`""
+Write-Host 'Configurando para abrir junto com o Windows...'
+# Atalho na pasta Inicializar: o jeito mais confiável (o Windows 11 pode ignorar entradas novas na chave Run).
+$atalho = Join-Path ([Environment]::GetFolderPath('Startup')) 'NotasDesktop.lnk'
+$shell = New-Object -ComObject WScript.Shell
+$link = $shell.CreateShortcut($atalho)
+$link.TargetPath = $exe
+$link.WorkingDirectory = $destino
+$link.Description = 'Notas na Área de Trabalho'
+$link.Save()
+# Marca o atalho como aprovado (o mesmo que "Habilitado" no Gerenciador de Tarefas > Aplicativos de inicialização).
+$aprovados = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\StartupFolder'
+New-Item -Path $aprovados -Force | Out-Null
+Set-ItemProperty -Path $aprovados -Name 'NotasDesktop.lnk' -Type Binary -Value ([byte[]](2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+# Versões antigas usavam a chave Run: remove para não abrir duas vezes.
+Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'NotasDesktop' -ErrorAction SilentlyContinue
 
 Start-Process $exe
 Write-Host ''

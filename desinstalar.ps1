@@ -14,6 +14,8 @@ if (Test-Path $exe) {
 
 Remove-Item -Path 'HKCU:\Software\Classes\DesktopBackground\Shell\NotasDesktop' -Recurse -ErrorAction SilentlyContinue
 Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'NotasDesktop' -ErrorAction SilentlyContinue
+Remove-Item -Path (Join-Path ([Environment]::GetFolderPath('Startup')) 'NotasDesktop.lnk') -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\StartupFolder' -Name 'NotasDesktop.lnk' -ErrorAction SilentlyContinue
 Remove-Item -Path $pasta -Recurse -Force -ErrorAction SilentlyContinue
 
 if ($ApagarAnotacoes) {
