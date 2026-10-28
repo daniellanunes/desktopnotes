@@ -1,4 +1,4 @@
-# Remove o "Notas na Área de Trabalho". As anotações ficam guardadas em %APPDATA%\NotasDesktop,
+﻿# Remove o "Notas na Área de Trabalho". As anotações ficam guardadas em %APPDATA%\NotasDesktop,
 # a não ser que você use -ApagarAnotacoes.
 # Uso: powershell -ExecutionPolicy Bypass -File desinstalar.ps1 [-ApagarAnotacoes]
 param([switch]$ApagarAnotacoes)

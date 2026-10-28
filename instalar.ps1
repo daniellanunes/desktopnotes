@@ -1,4 +1,4 @@
-# Compila e instala o "Notas na Área de Trabalho" para o usuário atual (não precisa de administrador).
+﻿# Compila e instala o "Notas na Área de Trabalho" para o usuário atual (não precisa de administrador).
 #  - copia o programa para %LOCALAPPDATA%\NotasDesktop\app
 #  - adiciona "Escrever nota aqui" no menu do botão direito da área de trabalho
 #  - inicia junto com o Windows (para as anotações reaparecerem)

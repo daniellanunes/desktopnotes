@@ -1,4 +1,4 @@
-# Gera src\nota.ico (16, 32, 48 e 256 px, com PNG embutido).
+﻿# Gera src\nota.ico (16, 32, 48 e 256 px, com PNG embutido).
 # Uso: powershell -ExecutionPolicy Bypass -File tools\gerar-icone.ps1
 param([string]$Saida = (Join-Path $PSScriptRoot '..\src\nota.ico'))
 
