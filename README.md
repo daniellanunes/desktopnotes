@@ -1,0 +1,72 @@
+# Notas na Área de Trabalho
+
+Escreva direto na área de trabalho do Windows: o texto aparece sobre o papel de parede, sem caixa nem janela.
+
+## Como usar
+
+1. Clique com o botão direito na área de trabalho → **Escrever nota aqui**
+   (no Windows 11: **Mostrar mais opções** ou `Shift+F10`). Atalho global: **Ctrl+Alt+N**.
+2. **Clique** onde quer escrever (ou **arraste** para definir a largura da linha) e digite.
+3. `Esc` ou clicar fora termina. A anotação fica no papel de parede e é salva sozinha.
+
+Depois:
+
+- **Clique no texto** para editar. Para mover, entre na edição (fora dela a anotação fica parada no lugar).
+- Editando: segure o **✥** (ou a faixa pontilhada de cima) para mover, e o canto inferior direito para
+  redimensionar; depois de soltar você continua digitando.
+- **📌 Alfinete** (na barra da anotação ou no menu): a anotação fica por cima de todas as janelas, até
+  das maximizadas, com um fundo escuro translúcido. Clique no alfinete laranja do canto para soltar.
+- **Botão direito no texto**: cor, fonte, contorno, transparência, travar, salvar em `.txt`, excluir.
+- Anotação que ficar vazia é apagada automaticamente.
+- Ícone na bandeja: nova anotação, trazer anotações para a frente, pasta dos dados, sair.
+
+### Formatação (durante a edição)
+
+Enquanto você edita, uma barra flutua acima do texto: fonte, tamanho, aumentar/diminuir letra,
+negrito, itálico, sublinhado, tachado, cor do texto, realce (marca-texto), alinhamento, lista e
+limpar formatação. Vale para o trecho selecionado (ou para o que você digitar em seguida).
+
+| Atalho | Ação |
+|---|---|
+| Ctrl+B / Ctrl+I / Ctrl+U | Negrito / itálico / sublinhado |
+| Ctrl+Shift+> / Ctrl+Shift+< | Aumentar / diminuir letra |
+| Ctrl+L / Ctrl+E / Ctrl+R | Alinhar à esquerda / centro / direita |
+| Ctrl+Shift+L | Lista com marcadores |
+| Ctrl+Shift+T | Lista de tarefas: clique na bolinha ○ para marcar ● e riscar a frase (funciona até fora da edição) |
+| Ctrl+Espaço | Limpar formatação |
+
+### Funções de bloco de notas (durante a edição)
+
+| Atalho | Ação |
+|---|---|
+| Ctrl+Z / Ctrl+Y | Desfazer / refazer |
+| Ctrl+X / C / V | Recortar / copiar / colar (sempre texto puro) |
+| Ctrl+A | Selecionar tudo |
+| Ctrl+F / F3 / Ctrl+H | Localizar / próxima / substituir |
+| F5 | Data e hora |
+| Ctrl+S / Ctrl+Shift+S | Salvar como `.txt` |
+| Ctrl+O | Abrir `.txt` na anotação |
+| Ctrl+N | Nova anotação |
+
+## Instalar / desinstalar
+
+Requer o .NET 9 (SDK para compilar). Não precisa de administrador.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File instalar.ps1
+powershell -ExecutionPolicy Bypass -File desinstalar.ps1            # mantém as anotações
+powershell -ExecutionPolicy Bypass -File desinstalar.ps1 -ApagarAnotacoes
+```
+
+As anotações ficam em `%APPDATA%\NotasDesktop\notas.json`.
+
+## Como funciona
+
+- `DesktopLayer`: janela com transparência por pixel (`UpdateLayeredWindow`) que desenha o texto sobre o
+  papel de parede. Pixels vazios deixam o clique passar para a área de trabalho. A dona da janela é a
+  própria área de trabalho (`Progman`), então as anotações ficam atrás das outras janelas e continuam
+  visíveis no Win+D.
+- `NoteForm`: editor (RichTextBox em modo texto puro) com fundo em cor-chave transparente, que aparece
+  por cima da camada só enquanto você edita.
+- `NotesApp`: instância única (mutex + named pipe), ícone na bandeja, atalho global e salvamento.
+- `PickerOverlay`: a camada escura onde você escolhe o local.
